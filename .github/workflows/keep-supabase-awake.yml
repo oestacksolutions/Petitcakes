@@ -14,16 +14,24 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
-            echo "Faltan SUPABASE_URL o SUPABASE_ANON_KEY en GitHub Secrets"
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "ERROR: Falta SUPABASE_URL en Repository secrets"
+            exit 1
+          fi
+          if [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "ERROR: Falta SUPABASE_ANON_KEY en Repository secrets"
             exit 1
           fi
 
           BASE_URL="${SUPABASE_URL%/}"
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
             "${BASE_URL}/rest/v1/categories?select=id&limit=1" \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
 
+          STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
           echo "HTTP status: $STATUS"
+          echo "Body: $BODY"
           test "$STATUS" = "200"
