@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, QrCode } from 'lucide-react';
 import { useCart } from '../context/useCart';

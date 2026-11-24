@@ -1,4 +1,8 @@
-﻿export default function Footer() {
+import { openInstagramProfile } from '../lib/socialLinks';
+
+const INSTAGRAM_USER = 'petitcakes.erikacarabajal';
+
+export default function Footer() {
   const phoneDisplay = import.meta.env.VITE_WA_DISPLAY || '11 XXXX-XXXX';
   const phoneWa = import.meta.env.VITE_WA_PHONE || '54911XXXXXXXX';
 
@@ -23,12 +27,13 @@
           </a>
 
           <a
-            href="https://www.instagram.com/petitcakes.erikacarabajal/"
+            href={`https://www.instagram.com/${INSTAGRAM_USER}/`}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => openInstagramProfile(e, INSTAGRAM_USER)}
             className="text-cocoa hover:text-roseSoft transition border-b border-transparent hover:border-roseSoft pb-0.5"
           >
-            @petitcakes.erikacarabajal
+            @{INSTAGRAM_USER}
           </a>
 
           <a
