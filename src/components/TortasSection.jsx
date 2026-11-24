@@ -1,11 +1,13 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import FlowerAccent from './FlowerAccent';
+import ImageLightboxModal from './ImageLightboxModal';
 
 export default function TortasSection({ tortas }) {
   const [selectedId, setSelectedId] = useState(null);
   const [description, setDescription] = useState('');
   const [size, setSize] = useState('');
+  const [previewImage, setPreviewImage] = useState(null);
 
   const currentIndex = Math.max(
     0,
@@ -28,6 +30,7 @@ export default function TortasSection({ tortas }) {
   useEffect(() => {
     if (tortas.length <= 1) return;
     const onKeyDown = (e) => {
+      if (previewImage) return;
       const tag = document.activeElement?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
       if (e.key === 'ArrowLeft') goPrev();
@@ -48,6 +51,14 @@ export default function TortasSection({ tortas }) {
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
+  const openTortaPreview = (torta) => {
+    setPreviewImage({
+      src: torta.image_url,
+      title: torta.title,
+      subtitle: torta.description || 'Pastelería Artesanal',
+    });
+  };
+
   return (
     <section id="tortas" className="relative py-16 px-4 bg-blush/50 border-t border-borderSoft">
       <FlowerAccent className="w-36 h-36 opacity-[0.07] absolute top-4 right-4 rotate-45" />
@@ -65,11 +76,18 @@ export default function TortasSection({ tortas }) {
           <div className="mb-12">
             <div className="max-w-2xl mx-auto bg-white border border-borderSoft rounded-2xl p-6 md:p-8 shadow-sm relative">
               <div className="aspect-[4/3] overflow-hidden rounded-xl bg-cream relative">
-                <img
-                  src={selectedTorta.image_url}
-                  alt={selectedTorta.title}
-                  className="w-full h-full object-cover transition duration-300"
-                />
+                <button
+                  type="button"
+                  onClick={() => openTortaPreview(selectedTorta)}
+                  aria-label={`Ver ${selectedTorta.title} completa`}
+                  className="block w-full h-full cursor-zoom-in group"
+                >
+                  <img
+                    src={selectedTorta.image_url}
+                    alt={selectedTorta.title}
+                    className="w-full h-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                  />
+                </button>
 
                 {tortas.length > 1 && (
                   <>
@@ -77,7 +95,7 @@ export default function TortasSection({ tortas }) {
                       type="button"
                       onClick={goPrev}
                       aria-label="Torta anterior"
-                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-cream/90 hover:bg-white text-cocoa p-2 rounded-full border border-borderSoft shadow-xs transition"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-cream/90 hover:bg-white text-cocoa p-2 rounded-full border border-borderSoft shadow-xs transition z-10"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -85,7 +103,7 @@ export default function TortasSection({ tortas }) {
                       type="button"
                       onClick={goNext}
                       aria-label="Torta siguiente"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-cream/90 hover:bg-white text-cocoa p-2 rounded-full border border-borderSoft shadow-xs transition"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-cream/90 hover:bg-white text-cocoa p-2 rounded-full border border-borderSoft shadow-xs transition z-10"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -93,7 +111,12 @@ export default function TortasSection({ tortas }) {
                 )}
               </div>
               <div className="pt-4 text-center">
-                <h3 className="font-serif text-2xl text-cocoa">{selectedTorta.title}</h3>
+                <h3
+                  onClick={() => openTortaPreview(selectedTorta)}
+                  className="font-serif text-2xl text-cocoa cursor-pointer hover:text-roseSoft transition"
+                >
+                  {selectedTorta.title}
+                </h3>
                 {selectedTorta.description && (
                   <p className="text-xs text-cocoaLight mt-1">{selectedTorta.description}</p>
                 )}
@@ -162,6 +185,11 @@ export default function TortasSection({ tortas }) {
           </form>
         </div>
       </div>
+
+      <ImageLightboxModal
+        image={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
     </section>
   );
 }

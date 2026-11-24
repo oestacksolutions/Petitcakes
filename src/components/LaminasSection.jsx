@@ -1,5 +1,6 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useCart } from '../context/useCart';
+import ImageLightboxModal from './ImageLightboxModal';
 
 const normalizeText = (str) =>
   String(str || '')
@@ -15,6 +16,7 @@ export default function LaminasSection({ categories, laminas }) {
   const [selectedSlug, setSelectedSlug] = useState('');
   const [customDesc, setCustomDesc] = useState('');
   const [customSize, setCustomSize] = useState('');
+  const [previewImage, setPreviewImage] = useState(null);
 
   // Unificar categorías equivalentes (ej: "Futbol" + "Fútbol") en una sola pestaña
   const groupedCategories = useMemo(() => {
@@ -88,6 +90,15 @@ export default function LaminasSection({ categories, laminas }) {
     setCustomSize('');
   };
 
+  const openLaminaPreview = (lam, categoryLabel) => {
+    setPreviewImage({
+      src: lam.image_url,
+      title: lam.title,
+      subtitle: categoryLabel,
+      price: lam.price,
+    });
+  };
+
   return (
     <section id="laminas" className="py-16 px-4 max-w-6xl mx-auto">
       <div className="text-center mb-10">
@@ -116,49 +127,60 @@ export default function LaminasSection({ categories, laminas }) {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mb-14">
-        {filteredLaminas.map((lam) => (
-          <article
-            key={lam.id}
-            className="bg-white border border-borderSoft rounded-2xl p-4 shadow-sm flex flex-col justify-between transition hover:border-roseSoft/60"
-          >
-            <div>
-              <div className="aspect-square overflow-hidden rounded-xl bg-cream mb-3">
-                <img
-                  src={lam.image_url}
-                  alt={lam.title}
-                  className="w-full h-full object-cover"
-                />
+        {filteredLaminas.map((lam) => {
+          const categoryLabel = activeGroup?.name || lam.categories?.name || 'Lámina';
+          return (
+            <article
+              key={lam.id}
+              className="bg-white border border-borderSoft rounded-2xl p-4 shadow-sm flex flex-col justify-between transition hover:border-roseSoft/60"
+            >
+              <div>
+                <button
+                  type="button"
+                  onClick={() => openLaminaPreview(lam, categoryLabel)}
+                  aria-label={`Ver ${lam.title} completa`}
+                  className="block w-full aspect-square overflow-hidden rounded-xl bg-cream mb-3 cursor-zoom-in group"
+                >
+                  <img
+                    src={lam.image_url}
+                    alt={lam.title}
+                    className="w-full h-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                  />
+                </button>
+                <p className="text-[11px] uppercase tracking-wider text-roseSoft">
+                  {categoryLabel}
+                </p>
+                <h3
+                  onClick={() => openLaminaPreview(lam, categoryLabel)}
+                  className="font-serif text-xl text-cocoa mt-0.5 leading-snug cursor-pointer hover:text-roseSoft transition"
+                >
+                  {lam.title}
+                </h3>
               </div>
-              <p className="text-[11px] uppercase tracking-wider text-roseSoft">
-                {activeGroup?.name || lam.categories?.name || 'Lámina'}
-              </p>
-              <h3 className="font-serif text-xl text-cocoa mt-0.5 leading-snug">
-                {lam.title}
-              </h3>
-            </div>
 
-            <div className="mt-4 pt-3 border-t border-borderSoft flex items-center justify-between gap-2">
-              <span className="text-sm font-medium text-cocoa">${lam.price}</span>
-              <button
-                type="button"
-                onClick={() =>
-                  addItem({
-                    cartId: `lam-${lam.id}`,
-                    id: lam.id,
-                    title: lam.title,
-                    categoryName: activeGroup?.name || lam.categories?.name || 'Catálogo',
-                    price: lam.price,
-                    quantity: 1,
-                    isCustom: false,
-                  })
-                }
-                className="px-3 py-1.5 bg-roseSoft hover:bg-roseHover text-white text-[11px] uppercase tracking-wider rounded-lg transition"
-              >
-                Agregar
-              </button>
-            </div>
-          </article>
-        ))}
+              <div className="mt-4 pt-3 border-t border-borderSoft flex items-center justify-between gap-2">
+                <span className="text-sm font-medium text-cocoa">${lam.price}</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    addItem({
+                      cartId: `lam-${lam.id}`,
+                      id: lam.id,
+                      title: lam.title,
+                      categoryName: categoryLabel,
+                      price: lam.price,
+                      quantity: 1,
+                      isCustom: false,
+                    })
+                  }
+                  className="px-3 py-1.5 bg-roseSoft hover:bg-roseHover text-white text-[11px] uppercase tracking-wider rounded-lg transition"
+                >
+                  Agregar
+                </button>
+              </div>
+            </article>
+          );
+        })}
       </div>
 
       <div className="bg-white border border-borderSoft rounded-2xl p-6 md:p-8 max-w-2xl mx-auto shadow-sm">
@@ -202,6 +224,11 @@ export default function LaminasSection({ categories, laminas }) {
           </button>
         </form>
       </div>
+
+      <ImageLightboxModal
+        image={previewImage}
+        onClose={() => setPreviewImage(null)}
+      />
     </section>
   );
 }
