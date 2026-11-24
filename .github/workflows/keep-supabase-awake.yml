@@ -35,4 +35,3 @@ jobs:
           echo "HTTP status: $STATUS"
           echo "Body: $BODY"
           test "$STATUS" = "200"
-'@)
