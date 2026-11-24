@@ -1,0 +1,29 @@
+name: Keep Supabase Awake
+
+on:
+  schedule:
+    - cron: '0 12 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "Faltan SUPABASE_URL o SUPABASE_ANON_KEY en GitHub Secrets"
+            exit 1
+          fi
+
+          BASE_URL="${SUPABASE_URL%/}"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${BASE_URL}/rest/v1/categories?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+
+          echo "HTTP status: $STATUS"
+          test "$STATUS" = "200"
