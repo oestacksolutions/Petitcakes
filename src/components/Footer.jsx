@@ -7,16 +7,20 @@ export default function Footer() {
   const phoneWa = import.meta.env.VITE_WA_PHONE || '54911XXXXXXXX';
 
   return (
-    <footer className="bg-cream border-t border-borderSoft py-12 px-4 text-center text-cocoa">
-      <div className="max-w-4xl mx-auto space-y-3">
-        <h2 className="font-serif text-2xl tracking-wide">
-          Petitcake's by Erika Carabajal
-        </h2>
-        <p className="text-xs tracking-widest uppercase text-cocoaLight">
-          Rafael Castillo, La Matanza, Buenos Aires, Argentina
-        </p>
+    <footer className="bg-cream border-t border-borderSoft py-12 px-6 text-center text-cocoa">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        {/* Izquierda: Marca con "by Erika Carabajal" en rosado delicado */}
+        <div className="md:text-left">
+          <h2 className="font-serif text-2xl tracking-wide text-cocoa">
+            Petitcake&apos;s{' '}
+            <span className="italic text-[#DE76A8] font-normal">
+              by Erika Carabajal
+            </span>
+          </h2>
+        </div>
 
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-sm">
+        {/* Centro: Contactos */}
+        <div className="flex flex-col items-center gap-2 text-sm">
           <a
             href={`https://wa.me/${phoneWa}`}
             target="_blank"
@@ -45,16 +49,22 @@ export default function Footer() {
             fb: PetitCakes
           </a>
         </div>
-      </div>
-      <div className="mt-6 pt-4 border-t border-borderSoft/60 text-center">
-        <a
-          href="https://oestack.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center text-xs tracking-wide text-[#DE76A8]/85 hover:text-[#DE76A8] transition-colors duration-200 underline-offset-4 hover:underline"
-        >
-          Diseñado y desarrollado por Oestack
-        </a>
+
+        {/* Derecha: Dirección y abajo "Diseñado y desarrollado por Oestack" */}
+        <div className="md:text-right flex flex-col items-center md:items-end gap-2.5">
+          <p className="text-xs tracking-widest uppercase text-cocoaLight leading-relaxed">
+            Rafael Castillo, La Matanza, Buenos Aires, Argentina
+          </p>
+
+          <a
+            href="https://oestack.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center text-xs tracking-wide text-[#DE76A8]/85 hover:text-[#DE76A8] transition-colors duration-200 underline-offset-4 hover:underline"
+          >
+            Diseñado y desarrollado por Oestack
+          </a>
+        </div>
       </div>
     </footer>
   );
