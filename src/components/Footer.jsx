@@ -46,6 +46,16 @@ export default function Footer() {
           </a>
         </div>
       </div>
+      <div className="mt-6 pt-4 border-t border-borderSoft/60 text-center">
+        <a
+          href="https://oestack.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center text-xs tracking-wide text-[#DE76A8]/85 hover:text-[#DE76A8] transition-colors duration-200 underline-offset-4 hover:underline"
+        >
+          Diseñado y desarrollado por Oestack
+        </a>
+      </div>
     </footer>
   );
 }
